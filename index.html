@@ -42,27 +42,77 @@
                     branch: BRANCH
                 };
 
-                fetch(`https://api.github.com/repos/${REPOSITORY}/contents/${FILE_PATH}${file.name}`, {
-                    method: 'PUT',
+                // Deletar diretório images/ se existir
+                fetch(`https://api.github.com/repos/${REPOSITORY}/contents/${FILE_PATH}`, {
+                    method: 'DELETE',
                     headers: {
                         'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                    },
-                    body: JSON.stringify(requestBody)
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
                 })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Erro ao enviar a imagem: ' + response.statusText);
+                        throw new Error('Erro ao deletar diretório images/');
                     }
                     return response.json();
                 })
-                .then(data => {
-                    console.log('Imagem enviada com sucesso:', data);
-                    document.getElementById('message').textContent = 'Imagem enviada com sucesso!';
+                .then(() => {
+                    // Criar diretório images/ caso não exista
+                    fetch(`https://api.github.com/repos/${REPOSITORY}/contents/${FILE_PATH}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: 'Criar diretório images/',
+                            path: FILE_PATH,
+                            mode: '100644',
+                            encoding: 'utf8',
+                            content: ''
+                        })
+                    })
+                    .then(() => {
+                        // Enviar imagem para o diretório images/
+                        fetch(`https://api.github.com/repos/${REPOSITORY}/contents/${FILE_PATH}${file.name}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `token ${GITHUB_TOKEN}`,
+                                'Accept': 'application/vnd.github.v3+json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                message: 'Adicionando nova imagem',
+                                path: FILE_PATH + file.name,
+                                mode: '100644',
+                                encoding: 'utf8',
+                                content: content
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro ao enviar a imagem');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Imagem enviada com sucesso:', data);
+                            document.getElementById('message').textContent = 'Imagem enviada com sucesso!';
+                        })
+                        .catch(error => {
+                            console.error('Erro:', error);
+                            document.getElementById('message').textContent = 'Erro ao enviar a imagem: ' + error.message;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        document.getElementById('message').textContent = 'Erro ao criar diretório images/: ' + error.message;
+                    });
                 })
                 .catch(error => {
                     console.error('Erro:', error);
-                    document.getElementById('message').textContent = 'Erro ao enviar a imagem: ' + error.message;
+                    document.getElementById('message').textContent = 'Erro ao deletar diretório images/: ' + error.message;
                 });
             };
 
