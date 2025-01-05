@@ -3,27 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site de Postagens</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Aplicativo de Postagens</title>
+    <style>
+        #feed-container {
+            display: none; /* Esconder o feed inicialmente */
+        }
+        #error-message {
+            color: red;
+        }
+        img {
+            border: 1px solid #ccc; /* Estilo da borda das imagens */
+            margin-top: 5px; /* Espaçamento acima das imagens */
+        }
+        button {
+            margin-left: 10px; /* Espaçamento ao lado dos botões */
+        }
+    </style>
 </head>
 <body>
+
     <div id="login-container">
         <h2>Login</h2>
-        <input type="text" id="username" placeholder="Usuário" />
-        <input type="password" id="password" placeholder="Senha" />
+        <label for="username">Usuário:</label>
+        <input type="text" id="username"><br>
+        <label for="password">Senha:</label>
+        <input type="password" id="password"><br>
         <button onclick="login()">Entrar</button>
-        <p id="error-message" style="color: red;"></p>
+        <div id="error-message"></div>
     </div>
 
-    <div id="feed-container" style="display:none;">
-        <h2>Feed</h2>
-        <div id="posts"></div>
-        <div id="post-form" style="display:none;">
-            <h3>Nova Postagem</h3>
-            <input type="text" id="post-text" placeholder="Digite sua postagem" />
-            <input type="file" id="post-image" accept="image/*" />
-            <button onclick="addPost()">Postar</button>
+    <div id="feed-container">
+        <h2>Feed de Postagens</h2>
+        <div id="post-form">
+            <textarea id="post-text" placeholder="Escreva algo..."></textarea><br>
+            <input type="file" id="post-image" accept="image/*"><br>
+            <button onclick="addPost()">Adicionar Postagem</button>
         </div>
+        <h3>Postagens:</h3>
+        <div id="posts"></div>
     </div>
 
     <script src="script.js"></script>
