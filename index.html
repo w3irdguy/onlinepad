@@ -93,6 +93,11 @@
             color: red;
             text-align: center;
         }
+
+        /* Corrigido o estilo do texto */
+        .post-text {
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -205,7 +210,10 @@
 
                 // Adicionar texto se houver
                 if (post.text) {
-                    postElement.innerHTML += `<div><strong>${post.user}:</strong> ${post.text}</div>`;
+                    const textElement = document.createElement('div');
+                    textElement.className = 'post-text';
+                    textElement.innerHTML = `<strong>${post.user}:</strong> ${post.text}`;
+                    postElement.appendChild(textElement);
                 }
 
                 // Botão de exclusão
