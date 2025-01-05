@@ -5,103 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aplicativo de Postagens</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        #login-container,
-        #feed-container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 300px;
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #4cae4c;
-        }
-
-        #posts {
-            margin-top: 20px;
-        }
-
-        .post {
-            background-color: #e8e8e8;
-            border-radius: 4px;
-            padding: 10px;
-            margin: 10px 0;
-            position: relative;
-        }
-
-        .post img {
-            max-width: 100%;
-            border-radius: 4px;
-            margin-top: 5px;
-        }
-
-        .delete-button {
-            position: absolute;
-            right: 10px;
-            top: 10px;
-            background-color: #d9534f;
-            border: none;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .delete-button:hover {
-            background-color: #c9302c;
-        }
-
-        #error-message {
-            color: red;
-            text-align: center;
-        }
-
-        /* Corrigido o estilo do texto */
-        .post-text {
-            margin-top: 10px;
-        }
-    </style>
 </head>
 
-<body>
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh;">
 
     <div id="login-container">
         <h2>Login</h2>
@@ -201,17 +107,15 @@
 
             allPosts.forEach((post, index) => {
                 const postElement = document.createElement('div');
-                postElement.className = 'post';
 
                 // Adicionar imagem se houver
                 if (post.image) {
-                    postElement.innerHTML = `<strong>${post.user} postou uma imagem:</strong><br><img src="${post.image}" alt="Imagem postada">`;
+                    postElement.innerHTML = `<strong>${post.user} postou uma imagem:</strong><br><img src="${post.image}" alt="Imagem postada"><br>`;
                 }
 
                 // Adicionar texto se houver
                 if (post.text) {
                     const textElement = document.createElement('div');
-                    textElement.className = 'post-text';
                     textElement.innerHTML = `<strong>${post.user}:</strong> ${post.text}`;
                     postElement.appendChild(textElement);
                 }
@@ -219,7 +123,6 @@
                 // Botão de exclusão
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Excluir';
-                deleteButton.className = 'delete-button';
                 deleteButton.onclick = function () {
                     if (post.image) {
                         deleteImagePost(index);
