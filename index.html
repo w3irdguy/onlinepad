@@ -1,110 +1,61 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enviar Imagem e Texto para o GitHub</title>
+    <title>Site de Postagens</title>
+    <link rel="stylesheet" href="style.css">
+    <title>Aplicativo de Postagens</title>
+    <style>
+        #feed-container {
+            display: none; /* Esconder o feed inicialmente */
+        }
+        #error-message {
+            color: red;
+        }
+        img {
+            border: 1px solid #ccc; /* Estilo da borda das imagens */
+            margin-top: 5px; /* Espaçamento acima das imagens */
+        }
+        button {
+            margin-left: 10px; /* Espaçamento ao lado dos botões */
+        }
+    </style>
 </head>
 <body>
+    <div id="login-container">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Usuário" />
+        <input type="password" id="password" placeholder="Senha" />
+        <label for="username">Usuário:</label>
+        <input type="text" id="username"><br>
+        <label for="password">Senha:</label>
+        <input type="password" id="password"><br>
+        <button onclick="login()">Entrar</button>
+        <p id="error-message" style="color: red;"></p>
+        <div id="error-message"></div>
+    </div>
 
-    <h1>Enviar Imagem e Texto para o GitHub</h1>
-    <input type="file" id="fileInput" accept="image/*" />
-    <input type="text" id="textInput" placeholder="Texto para enviar" />
-    <button id="submitButton">Enviar</button>
-    <div id="message"></div>
+    <div id="feed-container" style="display:none;">
+        <h2>Feed</h2>
+        <div id="posts"></div>
+        <div id="post-form" style="display:none;">
+            <h3>Nova Postagem</h3>
+            <input type="text" id="post-text" placeholder="Digite sua postagem" />
+            <input type="file" id="post-image" accept="image/*" />
+            <button onclick="addPost()">Postar</button>
+    <div id="feed-container">
+        <h2>Feed de Postagens</h2>
+        <div id="post-form">
+            <textarea id="post-text" placeholder="Escreva algo..."></textarea><br>
+            <input type="file" id="post-image" accept="image/*"><br>
+            <button onclick="addPost()">Adicionar Postagem</button>
+        </div>
+        <h3>Postagens:</h3>
+        <div id="posts"></div>
+    </div>
 
-    <script>
-        const GITHUB_TOKEN = 'your_github_token_here'; // Insira seu token aqui
-        const REPOSITORY = 'w3irdguy/onlinepad'; // Substitua pelo seu repositório
-        const BRANCH = 'main'; // O branch onde você quer enviar
-        const IMAGE_PATH = 'images/'; // Caminho para a imagem no repositório
-        const TEXT_PATH = 'texts/'; // Caminho para o texto no repositório
-
-        document.getElementById('submitButton').onclick = function() {
-            const fileInput = document.getElementById('fileInput');
-            const textInput = document.getElementById('textInput');
-            const file = fileInput.files[0];
-            const textContent = textInput.value;
-
-            if (!file) {
-                alert('Por favor, selecione um arquivo.');
-                return;
-            }
-
-            if (!file.type.startsWith('image/')) {
-                alert('Por favor, escolha um arquivo de imagem.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onloadend = function() {
-                const content = reader.result.split(',')[1]; // Remove o cabeçalho da imagem
-                const imageRequestBody = {
-                    message: 'Adicionando nova imagem',
-                    content: content,
-                    branch: BRANCH
-                };
-
-                // Enviar imagem para o diretório images/
-                fetch(`https://api.github.com/repos/${REPOSITORY}/contents/${IMAGE_PATH}${file.name}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                    },
-                    body: JSON.stringify(imageRequestBody)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro ao enviar a imagem: ' + response.statusText);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Imagem enviada com sucesso:', data);
-                    // Agora enviar o texto
-                    sendText(textContent);
-                })
-                .catch(error => {
-                    console.error('Erro:', error);
-                    document.getElementById('message').textContent = 'Erro ao enviar a imagem: ' + error.message;
-                });
-            };
-
-            reader.readAsDataURL(file);
-        };
-
-        function sendText(content) {
-            const textRequestBody = {
-                message: 'Adicionando novo texto',
-                content: btoa(content), // Codifica o texto em Base64
-                branch: BRANCH
-            };
-
-            fetch(`https://api.github.com/repos/${REPOSITORY}/contents/${TEXT_PATH}texto.txt`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                },
-                body: JSON.stringify(textRequestBody)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Erro ao enviar o texto: ' + response.statusText);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Texto enviado com sucesso:', data);
-                document.getElementById('message').textContent = 'Imagem e texto enviados com sucesso!';
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                document.getElementById('message').textContent = 'Erro ao enviar o texto: ' + error.message;
-            });
-        }
-    </script>
-
+    <script src="script.js"></script>
 </body>
+</html>
 </html>
