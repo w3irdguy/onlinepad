@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site De Postagens</title>
+    <title>Aplicativo de Postagens</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,7 +44,7 @@
         button {
             width: 100%;
             padding: 10px;
-            background-color: #0a2fa8;
+            background-color: #5cb85c;
             color: white;
             border: none;
             border-radius: 4px;
@@ -99,7 +99,7 @@
 <body>
 
     <div id="login-container">
-        <h2>Login Do Site</h2>
+        <h2>Login</h2>
         <div id="error-message"></div>
         <input type="text" id="username" placeholder="Usuário" required>
         <input type="password" id="password" placeholder="Senha" required>
@@ -181,6 +181,7 @@
             const texts = JSON.parse(localStorage.getItem('texts')) || [];
             const images = JSON.parse(localStorage.getItem('images')) || [];
 
+            // Carregar posts de texto
             texts.forEach((post, index) => {
                 const postElement = document.createElement('div');
                 postElement.className = 'post';
@@ -197,11 +198,12 @@
                 postsContainer.appendChild(postElement);
             });
 
+            // Carregar posts de imagem
             images.forEach((post, index) => {
                 const postElement = document.createElement('div');
                 postElement.className = 'post';
                 postElement.innerHTML = `<strong>${post.user} postou uma imagem:</strong>`;
-                
+
                 const imgElement = document.createElement('img');
                 imgElement.src = post.image;
                 imgElement.alt = "Imagem postada";
