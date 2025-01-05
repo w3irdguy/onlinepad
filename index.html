@@ -181,39 +181,33 @@
             const texts = JSON.parse(localStorage.getItem('texts')) || [];
             const images = JSON.parse(localStorage.getItem('images')) || [];
 
-            // Carregar posts de texto
-            texts.forEach((post, index) => {
+            // Carregar posts de imagem e texto
+            const allPosts = [...images.map(img => ({ user: img.user, image: img.image, text: '' })),
+                              ...texts.map(txt => ({ user: txt.user, text: txt.text, image: '' }))];
+
+            allPosts.forEach((post, index) => {
                 const postElement = document.createElement('div');
                 postElement.className = 'post';
-                postElement.innerHTML = `<strong>${post.user}:</strong> ${post.text}`;
-                
-                const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Excluir';
-                deleteButton.className = 'delete-button';
-                deleteButton.onclick = function () {
-                    deleteTextPost(index);
-                };
-                postElement.appendChild(deleteButton);
 
-                postsContainer.appendChild(postElement);
-            });
+                // Adicionar imagem se houver
+                if (post.image) {
+                    postElement.innerHTML = `<strong>${post.user} postou uma imagem:</strong><br><img src="${post.image}" alt="Imagem postada">`;
+                }
 
-            // Carregar posts de imagem
-            images.forEach((post, index) => {
-                const postElement = document.createElement('div');
-                postElement.className = 'post';
-                postElement.innerHTML = `<strong>${post.user} postou uma imagem:</strong>`;
-
-                const imgElement = document.createElement('img');
-                imgElement.src = post.image;
-                imgElement.alt = "Imagem postada";
-                postElement.appendChild(imgElement);
+                // Adicionar texto se houver
+                if (post.text) {
+                    postElement.innerHTML += `<div><strong>${post.user}:</strong> ${post.text}</div>`;
+                }
 
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Excluir';
                 deleteButton.className = 'delete-button';
                 deleteButton.onclick = function () {
-                    deleteImagePost(index);
+                    if (post.image) {
+                        deleteImagePost(index);
+                    } else {
+                        deleteTextPost(index);
+                    }
                 };
                 postElement.appendChild(deleteButton);
 
