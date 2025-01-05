@@ -67,17 +67,15 @@ function loadPosts() {
     // Carregar textos
     texts.forEach((post, index) => {
         const postElement = document.createElement('div');
+        postElement.className = 'post'; // Classe para estilização
         postElement.innerHTML = `<strong>${post.user}:</strong> ${post.text}`;
         
-        // Adicionar botão "Excluir" para o administrador
-        if (currentUser === 'sys_adm') {
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Excluir Texto';
-            deleteButton.onclick = function() {
-                deleteTextPost(index);
-            };
-            postElement.appendChild(deleteButton);
-        }
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Excluir Texto';
+        deleteButton.onclick = function() {
+            deleteTextPost(index);
+        };
+        postElement.appendChild(deleteButton); // Adicionando botão de exclusão
 
         postsContainer.appendChild(postElement); // Adicionando a postagem ao container
     });
@@ -85,6 +83,7 @@ function loadPosts() {
     // Carregar imagens
     images.forEach((post, index) => {
         const postElement = document.createElement('div');
+        postElement.className = 'post'; // Classe para estilização
         postElement.innerHTML = `<strong>${post.user} postou uma imagem:</strong>`;
         
         const imgElement = document.createElement('img');
@@ -94,15 +93,12 @@ function loadPosts() {
         imgElement.style.display = "block"; // Exibir como bloco
         postElement.appendChild(imgElement); // Adicionando a imagem à postagem
 
-        // Adicionar botão "Excluir" para o administrador
-        if (currentUser === 'sys_adm') {
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Excluir Imagem';
-            deleteButton.onclick = function() {
-                deleteImagePost(index);
-            };
-            postElement.appendChild(deleteButton);
-        }
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Excluir Imagem';
+        deleteButton.onclick = function() {
+            deleteImagePost(index);
+        };
+        postElement.appendChild(deleteButton); // Adicionando botão de exclusão
 
         postsContainer.appendChild(postElement); // Adicionando a postagem ao container
     });
