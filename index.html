@@ -1,61 +1,238 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Site de Postagens</title>
-    <link rel="stylesheet" href="style.css">
     <title>Aplicativo de Postagens</title>
     <style>
-        #feed-container {
-            display: none; /* Esconder o feed inicialmente */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
+
+        #login-container,
+        #feed-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4cae4c;
+        }
+
+        #posts {
+            margin-top: 20px;
+        }
+
+        .post {
+            background-color: #e8e8e8;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .post img {
+            max-width: 100%;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .delete-button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: #d9534f;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .delete-button:hover {
+            background-color: #c9302c;
+        }
+
         #error-message {
             color: red;
-        }
-        img {
-            border: 1px solid #ccc; /* Estilo da borda das imagens */
-            margin-top: 5px; /* Espaçamento acima das imagens */
-        }
-        button {
-            margin-left: 10px; /* Espaçamento ao lado dos botões */
+            text-align: center;
         }
     </style>
 </head>
+
 <body>
+
     <div id="login-container">
         <h2>Login</h2>
-        <input type="text" id="username" placeholder="Usuário" />
-        <input type="password" id="password" placeholder="Senha" />
-        <label for="username">Usuário:</label>
-        <input type="text" id="username"><br>
-        <label for="password">Senha:</label>
-        <input type="password" id="password"><br>
-        <button onclick="login()">Entrar</button>
-        <p id="error-message" style="color: red;"></p>
         <div id="error-message"></div>
+        <input type="text" id="username" placeholder="Usuário" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <button onclick="login()">Entrar</button>
     </div>
 
-    <div id="feed-container" style="display:none;">
+    <div id="feed-container" style="display: none;">
         <h2>Feed</h2>
-        <div id="posts"></div>
-        <div id="post-form" style="display:none;">
-            <h3>Nova Postagem</h3>
-            <input type="text" id="post-text" placeholder="Digite sua postagem" />
-            <input type="file" id="post-image" accept="image/*" />
+        <div id="post-form" style="margin-bottom: 20px;">
+            <textarea id="post-text" placeholder="Escreva algo..."></textarea>
+            <input type="file" id="post-image" accept="image/*">
             <button onclick="addPost()">Postar</button>
-    <div id="feed-container">
-        <h2>Feed de Postagens</h2>
-        <div id="post-form">
-            <textarea id="post-text" placeholder="Escreva algo..."></textarea><br>
-            <input type="file" id="post-image" accept="image/*"><br>
-            <button onclick="addPost()">Adicionar Postagem</button>
         </div>
-        <h3>Postagens:</h3>
         <div id="posts"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const viewers = { "viewer": "p4ssw@rd", "sys_adm": "rootroot#" };
+        let currentUser = '';
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (viewers[username] && viewers[username] === password) {
+                currentUser = username;
+                errorMessage.textContent = '';
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('feed-container').style.display = 'block';
+                document.getElementById('post-form').style.display = username === 'sys_adm' ? 'block' : 'none';
+                loadPosts();
+            } else {
+                errorMessage.textContent = 'Usuário ou senha incorretos!';
+            }
+        }
+
+        function addPost() {
+            const postText = document.getElementById('post-text').value;
+            const postImageInput = document.getElementById('post-image');
+            const postImageFile = postImageInput.files[0];
+
+            if (!postText.trim() && !postImageFile) {
+                alert('Por favor, insira texto ou selecione uma imagem.');
+                return;
+            }
+
+            const texts = JSON.parse(localStorage.getItem('texts')) || [];
+            const images = JSON.parse(localStorage.getItem('images')) || [];
+
+            if (postText.trim()) {
+                texts.push({ user: currentUser, text: postText });
+            }
+
+            if (postImageFile) {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    images.push({ user: currentUser, image: reader.result });
+                    savePosts(texts, images);
+                };
+                reader.readAsDataURL(postImageFile);
+            } else {
+                savePosts(texts, images);
+            }
+        }
+
+        function savePosts(texts, images) {
+            localStorage.setItem('texts', JSON.stringify(texts));
+            localStorage.setItem('images', JSON.stringify(images));
+            loadPosts();
+            document.getElementById('post-text').value = '';
+            document.getElementById('post-image').value = '';
+        }
+
+        function loadPosts() {
+            const postsContainer = document.getElementById('posts');
+            postsContainer.innerHTML = '';
+
+            const texts = JSON.parse(localStorage.getItem('texts')) || [];
+            const images = JSON.parse(localStorage.getItem('images')) || [];
+
+            texts.forEach((post, index) => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                postElement.innerHTML = `<strong>${post.user}:</strong> ${post.text}`;
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = function () {
+                    deleteTextPost(index);
+                };
+                postElement.appendChild(deleteButton);
+
+                postsContainer.appendChild(postElement);
+            });
+
+            images.forEach((post, index) => {
+                const postElement = document.createElement('div');
+                postElement.className = 'post';
+                postElement.innerHTML = `<strong>${post.user} postou uma imagem:</strong>`;
+                
+                const imgElement = document.createElement('img');
+                imgElement.src = post.image;
+                imgElement.alt = "Imagem postada";
+                postElement.appendChild(imgElement);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Excluir';
+                deleteButton.className = 'delete-button';
+                deleteButton.onclick = function () {
+                    deleteImagePost(index);
+                };
+                postElement.appendChild(deleteButton);
+
+                postsContainer.appendChild(postElement);
+            });
+        }
+
+        function deleteTextPost(postIndex) {
+            const texts = JSON.parse(localStorage.getItem('texts')) || [];
+            texts.splice(postIndex, 1);
+            localStorage.setItem('texts', JSON.stringify(texts));
+            loadPosts();
+        }
+
+        function deleteImagePost(postIndex) {
+            const images = JSON.parse(localStorage.getItem('images')) || [];
+            images.splice(postIndex, 1);
+            localStorage.setItem('images', JSON.stringify(images));
+            loadPosts();
+        }
+    </script>
 </body>
-</html>
+
 </html>
