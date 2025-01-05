@@ -181,9 +181,18 @@
             const texts = JSON.parse(localStorage.getItem('texts')) || [];
             const images = JSON.parse(localStorage.getItem('images')) || [];
 
-            // Carregar posts de imagem e texto
-            const allPosts = [...images.map(img => ({ user: img.user, image: img.image, text: '' })),
-                              ...texts.map(txt => ({ user: txt.user, text: txt.text, image: '' }))];
+            // Combina as postagens de texto e imagem para garantir que o texto e a imagem sejam carregados juntos
+            const allPosts = [];
+
+            // Adiciona as imagens
+            images.forEach(img => {
+                allPosts.push({ user: img.user, image: img.image, text: '' });
+            });
+
+            // Adiciona os textos
+            texts.forEach(txt => {
+                allPosts.push({ user: txt.user, text: txt.text, image: '' });
+            });
 
             allPosts.forEach((post, index) => {
                 const postElement = document.createElement('div');
@@ -199,6 +208,7 @@
                     postElement.innerHTML += `<div><strong>${post.user}:</strong> ${post.text}</div>`;
                 }
 
+                // Botão de exclusão
                 const deleteButton = document.createElement('button');
                 deleteButton.textContent = 'Excluir';
                 deleteButton.className = 'delete-button';
